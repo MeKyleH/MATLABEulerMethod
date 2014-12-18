@@ -1,0 +1,93 @@
+% EULER_METHOD Uses Euler's Method to calculate the solution to an ODE.
+% 
+% Author: Kyle Holt
+% Course: ME EN 2500
+% Date: 8/28/13
+%
+% [times, states] = euler_method(derivative_function, time_span,
+%   initial_condition) uses Euler's Method to calculate the solution to the
+%   ODE defined by the system of equations derivative_function, over the
+%   time steps defined by time_span, with the initial conditions
+%   initial_condition.  The time output is stored in the array times, while
+%   the dependent variables are stored in the array states.  Euler's Method
+%   uses the equation:
+%                       dY
+%       Y_(i+1) = Y_(i) + --*delta_t
+%                       dt
+%   where delta_t is the time step, Y(i) is the values of the dependent
+%   variables at the current time, Y(i+1) is the values of the dependent
+%   variables at the next time, and dY/dt is the derivative function
+%   evaluated at the current time.
+% 
+% Inputs:
+%   derivative_function - A function handle to the derivative function
+%                         defining the system.
+%   time_span           - An array of times (or other independent variable)
+%                         at which to evaluate Euler's Method.  The nTimes
+%                         values in this array determine the size of the
+%                         outputs.
+%   initial_condition   - A value containing the initial condition to be
+%                         used in evaluating the derivative_function.  Must
+%                         be the same size as that expected for the second
+%                         input of derivative_function.
+% 
+% Outputs:
+%   times  - An nTimes-by-1 array of times (or other independent variable)
+%            at which Euler's Method was evaluated.
+%   states - An nTimes-by-1 array of dependent variables at which
+%            Euler's Method was evaluated.
+% 
+% Sample Usage:
+% 
+%   >> [t,y] = euler_method(@falling_ball,0:5,50)
+%   t =
+%        0
+%        1
+%        2
+%        3
+%        4
+%        5
+%   y =
+%      50.0000
+%      -6.9239
+%     -17.6275
+%     -33.2847
+%     -63.9675
+%    -150.8969
+%   
+
+function [times, states] = euler_method(falling_ball, time_span, initial_condition)
+
+    % Determine number of items in outputs
+    i = length(time_span);
+    
+    % Initialize outputs
+    times = zeros(i,1);  % ** NOTE TO SELF: if the second number is a two this would create an array with 2 columns
+    states = zeros(i,1);
+    
+    % Assign first row of outputs
+    times(1) = time_span(1);
+    states(1) = initial_condition;
+    
+    % Assign other rows of output
+    for index = 1:(i-1)
+        % Assign variables for current time, current state
+        current_time = times(index);
+        current_state = states(index,:);
+        
+        % Calculate slopes at current time
+        derivative = falling_ball(current_time, current_state);
+        
+        % Calculate time step
+        time_step = time_span(index+1) - current_time;
+        
+        % Calculate next state
+        next_state = current_state + derivative*time_step;
+        
+        % Assign the outputs
+        times(index+1) = time_span(index+1);
+        states(index+1) = next_state;
+    % end for loop iteration
+    end 
+    %end function    
+end 
